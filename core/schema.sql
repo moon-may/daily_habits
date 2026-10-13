@@ -4,12 +4,12 @@ CREATE TABLE IF NOT EXISTS habits(
     habit_type TEXT NOT NULL,
     unit TEXT,
     goal REAL,
-    created_date DATE);
+    created_date DATE DEFAULT CURRENT_DATE);
 
 CREATE TABLE IF NOT EXISTS completed(
     id INTEGER PRIMARY KEY,
     today_value REAL,
-    today_date DATE,
+    today_date DATE DEFAULT CURRENT_DATE,
     habit_id INTEGER,
     FOREIGN KEY (habit_id) REFERENCES habits(id) 
 );
