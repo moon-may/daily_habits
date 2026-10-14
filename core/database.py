@@ -1,7 +1,23 @@
+import os
 import sqlite3
+from functools import wraps
+
+DB_PATH = os.path.join(os.path.dirname(__file__), '..', 'daily_habits.db')
+
+# Декоратор - подключение к БД
+def db_connect(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        con = sqlite3.connect(DB_PATH)
+        cursor = con.cursor()
+        result = func(cursor, *args, **kwargs)
+        con.commit()
+        con.close()
+        return result
+    return wrapper
 
 # Создание файла базы данных
-con = sqlite3.connect('daily_habits.db')
+con = sqlite3.connect(DB_PATH)
 cursor = con.cursor()
 
 # Чтение скрипта для создания таблиц
