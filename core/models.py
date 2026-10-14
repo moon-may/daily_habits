@@ -1,18 +1,5 @@
+from database import db_connect
 
-import sqlite3
-from functools import wraps
-
-# Декоратор - подключение к БД
-def db_connect(func):
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        con = sqlite3.connect('daily_habits.db')
-        cursor = con.cursor()
-        result = func(cursor, *args, **kwargs)
-        con.commit()
-        con.close()
-        return result
-    return wrapper
 
 @db_connect
 def add_habit(cursor, habit_data):
@@ -40,3 +27,16 @@ def change_progress(cursor, today_daily, habit_id, today_date):
     cursor.execute('''UPDATE completed SET today_daily=? WHERE habit_id=? AND today_date=?''',
                    (today_daily, habit_id, today_date))
 
+@db_connect
+def get_habits(cursor):
+    '''Получить все привычки в БД'''
+    cursor.execute('''SELECT * FROM habits''')
+    return cursor.fetchall()
+
+
+@db_connect
+def get_completions(cursor, habit_id, start_date, end_date):
+    '''Получить данные по привычкам за период'''
+    cursor.execute('''SELECT today_value FROM completed 
+                    WHERE habit_id=? AND today_date BETWEEN ? AND ?''',
+                    (habit_id, start_date, end_date))
