@@ -1,5 +1,4 @@
-from database import db_connect
-
+from core.database import db_connect
 
 @db_connect
 def add_habit(cursor, habit_data):
