@@ -16,13 +16,16 @@ class MainWindow(QMainWindow):
 
         main_layout = QHBoxLayout(central)
 
-        # Левая панель содержит список всех привычек
+        # Левая панель содержит список всех привычек, кнопку для добавления новой
         left_bar = QWidget()
         left_layout = QVBoxLayout(left_bar)
 
+        # Список привычек
         self.habits_list = QListWidget()
         left_layout.addWidget(self.habits_list)
+        self.update_habits_list()
 
+        # Кнопка "Добавить привычку"
         add_habit_btn = QPushButton('Добавить привычку')
         add_habit_btn.clicked.connect(self.add_habit_clicked)
         left_layout.addWidget(add_habit_btn)
@@ -35,6 +38,7 @@ class MainWindow(QMainWindow):
 
 
     def add_habit_clicked(self):
+        '''Добавляет новую привычку'''
         dialog = AddHabitWindow()
         if dialog.exec() == QDialog.DialogCode.Accepted:
             habit_name = dialog.name_input.text()
@@ -42,6 +46,16 @@ class MainWindow(QMainWindow):
             unit = dialog.unit_input.text()
             goal = dialog.goal_input.value()
             add_habit((habit_name, habit_type, unit, goal))
+            self.update_habits_list()
+
+
+    def update_habits_list(self):
+        '''Обновляет список привычек'''
+        self.habits_list.clear()
+        habits = get_habits()
+        for habit in habits:
+            habit = QListWidgetItem(habit[1])
+            self.habits_list.addItem(habit)
 
 
 
